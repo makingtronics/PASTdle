@@ -1,19 +1,14 @@
-- guess autocomplete should show up when not typing too?
 - add tags
 - add description
-- copy/output should work properly (fix evaluateGuess)
-- add better fonts!
+- add images
 - add background
-- add empty guess columns
-- The completely back background is a little bland. How can I add a generic background stars background (low opacity, probably in grey) - I found a small three.js star background that I like.
-- remove console logs
 - add better comments/remove qwen comments
-- add column headings for guesses
-- emoji output for ground space etc
 - fix hint menu
-- end game modal should let you click out of it
 - easy mode toggle in top bar
-- reroll button in top bar for new one (debug)
-- change yes/no in completed renderer to "complete" "not complete"
-- guess grid non-full width
+- make it a daily game, add cookies to make it such, "next pastdle in...", remove play again
+- when done change 'guess' box to the success/false modal, so the modal should be removed
+- alphabetise scrollbar
+- mobile responsive UI (like stewardle) - top bar skews over on mobile right now, central grid should resize to fill entire screen, same with bar, if below min. size.
+- better search bar text string
+- refactor to remove qwen-isms, make css/js flow nicer
 - clicking on short ID cell brings up small modal with project id - name header, project description content, x to exit
