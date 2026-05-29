@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PASTdle</title>
+  <!-- nabbed the icons from the PAST website no snitching -->
+   <link href="https://framerusercontent.com/images/UpQqCvnXnnWIJe83bHVx8wiS6c.svg" rel="icon" media="(prefers-color-scheme: light)">
+   <link href="https://framerusercontent.com/images/lEw30MepTu6c4gWQtzfsdq01Ms.png" rel="icon" media="(prefers-color-scheme: dark)">
+  <style>
+    /* 🎨 CONFIGURATION: Change fonts, colors, layout params here */
+    :root {
+      --bg-color: #050505;
+      --surface-color: #131416;
+      --border-color: #292b2d;
+      --text-primary: #f1f3f3;
+      --text-secondary: #adadad;
+      --text-dark: #0d0d0d;
+      --accent-color: #0037ff;
+      --accent-hover: #0037ff;
+      
+      /* Feedback Colors */
+      --correct: #538d4e;
+      --partial: #b59f3b;
+      --higher: #2196F3;
+      --lower: #a72cdc;
+      --wrong: #eb4b48;
+      
+      /* Typography */
+      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      
+      /* Layout */
+      --max-guesses: 6;
+      --cell-size: 48px;
+      --grid-gap: 8px;
+      --border-radius: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-color);
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      background: var(--bg-color);
+      backdrop-filter: blur(8px);
+      z-index: 10;
+    }
+    .logo-area { display: flex; align-items: center; gap: 10px; }
+    .logo-placeholder { width: 28px; height: 28px; background: var(--surface-color); border-radius: 6px; border: 1px solid var(--border-color); }
+    h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+    .btn-icon {
+      background: none; border: 1px solid var(--border-color); color: var(--text-primary);
+      width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center; transition: 0.2s;
+    }
+    .btn-icon:hover { background: var(--surface-color); border-color: var(--accent-color); }
+
+    /* MAIN GAME AREA */
+    main {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 100px; /* Space for input bar */
+    }
+
+    /* GUESS GRID */
+    #guess-grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--grid-gap);
+      overflow-y: auto;
+      padding-right: 25%;
+      padding-left: 25%;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-color) transparent;
+    }
+    .guess-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--grid-gap);
+    }
+    .cell {
+      background: var(--surface-color);
+      border: 2px solid var(--border-color);
+      border-radius: var(--border-radius);
+      height: var(--cell-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 4px;
+      word-break: break-word;
+      transition: all 0.2s ease;
+    }
+    .cell.correct { background: var(--correct); border-color: var(--correct); color: var(--text-dark); }
+    .cell.partial { background: var(--partial); border-color: var(--partial); color: var(--text-dark); }
+    .cell.higher { background: var(--higher); border-color: var(--higher); color: var(--text-dark); }
+    .cell.lower { background: var(--lower); border-color: var(--lower); color: var(--text-dark); }
+    .cell.wrong { background: var(--wrong); border-color: var(--wrong); color: var(--text-dark) }
+
+    /* INPUT AREA */
+    #input-area {
+      position: fixed;
+      bottom: 0;
+      left: 30%;
+      right: 30%;
+      background: var(--bg-color);
+      /* border-top: 1px solid var(--border-color); */
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 20;
+    }
+    .search-container { position: relative; }
+    #project-input {
+      width: 100%;
+      padding: 12px 12px 12px 40px;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      outline: none;
+    }
+    #project-input:focus { border-color: var(--accent-color); }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
+    
+    #autocomplete-list {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      right: 0;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      z-index: 30;
+    }
+    .ac-item {
+      padding: 10px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+    .ac-item:last-child { border-bottom: none; }
+    .ac-item:hover, .ac-item.active { background: var(--bg-color); }
+    .ac-short { font-weight: 700; color: var(--accent-color); }
+    .ac-long { color: var(--text-secondary); margin-left: 6px; }
+
+    #submit-btn {
+      padding: 12px;
+      background: var(--accent-color);
+      color: var(--text-primary);
+      border: none;
+      border-radius: var(--border-radius);
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    #submit-btn:hover { background: var(--accent-hover); }
+    #submit-btn:disabled { background: var(--border-color); cursor: not-allowed; opacity: 0.5; }
+
+    /* MODALS */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: var(--bg-color);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 20px;
+    }
+    .modal-content {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    .modal-content h2 { margin-bottom: 12px; }
+    .modal-content p { color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5; }
+    .modal-img { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; background: var(--bg-color); }
+    .btn-primary {
+      background: var(--accent-color); color: var(--text-primary); border: none; padding: 10px 16px;
+      border-radius: 6px; font-weight: 600; cursor: pointer; margin: 4px;
+    }
+    .btn-secondary {
+      background: transparent; color: var(--text-primary); border: 1px solid var(--border-color);
+      padding: 10px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; margin: 4px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 480px) {
+      :root { --cell-size: 42px; --grid-gap: 6px; }
+      .cell { font-size: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-area">
+      <img src = "https://framerusercontent.com/images/lEw30MepTu6c4gWQtzfsdq01Ms.png" style="max-height:48px;max-width:48px">
+      <h1>PASTdle</h1>
+    </div>
+    <button class="btn-icon" id="help-btn" title="How to Play">?</button>
+  </header>
+
+  <main>
+    <div id="guess-grid"></div>
+  </main>
+
+  <div id="input-area">
+    <div class="search-container">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="project-input" placeholder="Type project name or tag..." autocomplete="off">
+      <div id="autocomplete-list"></div>
+    </div>
+    <button id="submit-btn">GUESS</button>
+  </div>
+
+  <!-- HELP MODAL -->
+  <div id="help-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h2>How to Play</h2>
+      <p>Guess the hidden PAST project in 6 tries. Each guess gives feedback:</p>
+      <p>✅ Correct &nbsp; ⬆️ Higher &nbsp; ⬇️ Lower &nbsp; 🟡 Partial &nbsp; ❌ Wrong</p>
+      <button class="btn-primary" onclick="toggleModal('help-modal')">Got it</button>
+    </div>
+  </div>
+
+  <!-- END GAME MODAL -->
+  <div id="end-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h2 id="end-title">Game Over</h2>
+      <img id="end-image" class="modal-img" src="" alt="" style="display:none;">
+      <p id="end-desc"></p>
+      <div id="share-box" style="background:var(--bg-color);padding:8px;border-radius:6px;margin-bottom:12px;font-family:var(--font-mono);font-size:0.8rem;word-break:break-all;"></div>
+      <button class="btn-primary" onclick="copyShare()">📋 Copy Results</button>
+      <button class="btn-secondary" onclick="resetGame()">Play Again</button>
+    </div>
+  </div>
+
+  <script>
+    const PROJECTS = []
+    // ⚙️ CONFIGURATION
+    const CONFIG = {
+        maxGuesses: 6,
+        easyMode: false, // If true, autocomplete filters to only valid remaining candidates
+        theme: 'dark',
+        columns: ['Project', 'Year', 'Dept', 'Done?', 'Env', 'Status']
+    };
+
+    // 📦 STATE
+    let state = {
+        target: null,
+        guesses: [], // { project, feedback: { project: 'CORRECT', year: 'UP', ... } }
+        currentInput: '',
+        gameOver: false,
+        acIndex: -1,
+        acItems: []
+    };
+
+    // 🎮 CORE LOGIC STUBS
+    function initGame() {
+        state.target = PROJECTS[Math.floor(Math.random() * PROJECTS.length)];
+        state.guesses = [];
+        state.gameOver = false;
+        document.getElementById('guess-grid').innerHTML = '';
+        document.getElementById('project-input').value = '';
+        document.getElementById('submit-btn').disabled = false;
+        console.log('🎯 Target:', state.target.shortName); // Remove in prod
+    }
+
+    function compareDesignEnvs(guessEnv, targetEnv) {
+      const guessSet = new Set(guessEnv);
+      const targetSet = new Set(targetEnv);
+      console.log(guessSet,guessEnv,targetSet,targetEnv)
+
+      if (guessSet.size === targetSet.size && [...guessSet].every(item => targetSet.has(item))) {
+        return 'CORRECT';
+      } 
+      if ([...guessSet].some(item => targetSet.has(item))) {
+        return 'PARTIAL';
+      }
+      return 'WRONG';
+    }
+
+
+    function evaluateGuess(guess) {
+        // TODO: Implement feedback logic here
+        // Return object like: { project: 'WRONG', year: 'UP', dept: 'WRONG', done: 'CORRECT', env: 'PARTIAL', status: 'CORRECT' }
+        return {
+            project: guess.shortName === state.target.shortName ? 'CORRECT' : 'WRONG',
+            year: guess.startYear > state.target.startYear ? 'DOWN' : guess.startYear < state.target.startYear ? 'UP' : 'CORRECT',
+            dept: guess.department === state.target.department ? 'CORRECT' : 'WRONG',
+            done: guess.isCompleted === state.target.isCompleted ? 'CORRECT' : 'WRONG',
+            lastActive: guess.lastActive > state.target.lastActive ? 'DOWN' : guess.lastActive < state.target.lastActive ? 'UP' : 'CORRECT',
+              env: compareDesignEnvs(guess.designEnv,state.target.designEnv)
+        };
+    }
+
+    function renderGuessRow(guess, feedback) {
+        const row = document.createElement('div');
+        row.className = 'guess-row';
+
+        const mapFeedback = (val, fb) => {
+            let cls = 'wrong';
+            let display = val;
+            if(val == 'Yes') {display = 'Active'}
+            if (fb === 'CORRECT') { cls = 'correct'; display = val; }
+            else if (fb === 'UP') { cls = 'higher'; display = '⬆️ ' + val; }
+            else if (fb === 'DOWN') { cls = 'lower'; display = '⬇️ ' + val; }
+            else if (fb === 'PARTIAL') { cls = 'partial'; display = val; }
+            return `<div class="cell ${cls}">${display}</div>`;
+        };
+
+        row.innerHTML = `
+        ${mapFeedback(guess.shortName, feedback.project)}
+        ${mapFeedback(guess.department, feedback.dept)}
+        ${mapFeedback(guess.startYear, feedback.year)}
+        ${mapFeedback(guess.lastActive, feedback.lastActive)}
+        ${mapFeedback(guess.isCompleted ? 'Inactive' : 'Active', feedback.done)}
+        ${mapFeedback(guess.designEnv.join(', '), feedback.env)}
+        
+        `;
+        return row;
+    }
+
+    function handleSubmission() {
+        const input = document.getElementById('project-input').value.trim().toUpperCase();
+        if (!input) return;
+
+        const guess = PROJECTS.find(p => p.shortName.toUpperCase() === input);
+        if (!guess) { return; }
+
+        const feedback = evaluateGuess(guess);
+        state.guesses.push({ project: guess, feedback });
+        document.getElementById('guess-grid').appendChild(renderGuessRow(guess, feedback));
+
+        document.getElementById('project-input').value = '';
+        hideAutocomplete();
+
+        if (feedback.project === 'CORRECT' || state.guesses.length >= CONFIG.maxGuesses) {
+            endGame(feedback.project === 'CORRECT');
+        }
+    }
+
+    function endGame(won) {
+        state.gameOver = true;
+        document.getElementById('submit-btn').disabled = true;
+        document.getElementById('end-title').textContent = won ? '🎉 You Got It!' : '📡 Mission Failed';
+        document.getElementById('end-desc').textContent = state.target.description || 'No description available.';
+        const imgEl = document.getElementById('end-image');
+        if (state.target.imageUrl) { imgEl.src = state.target.imageUrl; imgEl.style.display = 'block'; }
+        else { imgEl.style.display = 'none'; }
+
+        // TODO: Generate share string from state.guesses
+        document.getElementById('share-box').textContent = state.guesses.map(g => 
+            g.feedback.project + g.feedback.year + g.feedback.dept
+        ).join('\n');
+
+        toggleModal('end-modal');
+    }
+
+    function resetGame() {
+        toggleModal('end-modal');
+        initGame();
+    }
+
+    // 🔍 AUTOCOMPLETE
+    const acList = document.getElementById('autocomplete-list');
+    const input = document.getElementById('project-input');
+
+    input.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase();
+        state.acItems = PROJECTS.filter(p => 
+        p.shortName.toLowerCase().includes(q) || 
+        p.longName.toLowerCase().includes(q) ||
+        p.tags.some(t => t.toLowerCase().includes(q))
+        ).sort((a,b) => a.shortName.localeCompare(b.shortName));
+
+        if (CONFIG.easyMode && state.guesses.length > 0) {
+            // TODO: Filter state.acItems based on previous feedback constraints
+        }
+
+        renderAutocomplete();
+    });
+
+    function renderAutocomplete() {
+        acList.innerHTML = '';
+        if (state.acItems.length === 0) { hideAutocomplete(); return; }
+        state.acItems.forEach((p, i) => {
+        const div = document.createElement('div');
+            div.className = `ac-item ${i === state.acIndex ? 'active' : ''}`;
+            div.innerHTML = `<span class="ac-short">${p.shortName}</span><span class="ac-long">${p.longName}</span>`;
+            div.onclick = () => { input.value = p.shortName; hideAutocomplete(); };
+            acList.appendChild(div);
+        });
+        acList.style.display = 'block';
+        state.acIndex = -1;
+    }
+
+    function hideAutocomplete() { acList.style.display = 'none'; }
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown') { state.acIndex = Math.min(state.acIndex + 1, state.acItems.length - 1); renderAutocomplete(); }
+        if (e.key === 'ArrowUp') { state.acIndex = Math.max(state.acIndex - 1, -1); renderAutocomplete(); }
+        if (e.key === 'Enter') {
+            if (state.acIndex >= 0) { input.value = state.acItems[state.acIndex].shortName; hideAutocomplete(); }
+            handleSubmission();
+        }
+    });
+
+    // 🖱️ EVENT LISTENERS
+    document.getElementById('submit-btn').addEventListener('click', handleSubmission);
+    document.getElementById('help-btn').addEventListener('click', () => toggleModal('help-modal'));
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-container')) hideAutocomplete();
+    });
+
+    function toggleModal(id) {
+        const el = document.getElementById(id);
+        el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function copyShare() {
+        const text = document.getElementById('share-box').textContent;
+        navigator.clipboard.writeText(text).then(() => alert('Copied to clipboard!'));
+    }
+
+    initGame();
+  </script>
+</body>
+</html>

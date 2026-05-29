@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Rethink+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PASTdle</title>
+  <!-- nabbed the icons from the PAST website no snitching -->
+  <link href="https://framerusercontent.com/images/UpQqCvnXnnWIJe83bHVx8wiS6c.svg" rel="icon" media="(prefers-color-scheme: light)">
+  <link href="https://framerusercontent.com/images/lEw30MepTu6c4gWQtzfsdq01Ms.png" rel="icon" media="(prefers-color-scheme: dark)">
+  <style>
+    :root {
+      --bg-color: #050505;
+      --surface-color: #131416;
+      --border-color: #292b2d;
+      --text-primary: #f1f3f3;
+      --text-secondary: #adadad;
+      --text-dark: #0d0d0d;
+      --accent-color: #0037ff;
+      --accent-hover: #0037ff;
+      /* Feedback Colors */
+      --correct: #538d4e;
+      --partial: #b59f3b;
+      --higher: #2196F3;
+      --lower: #a72cdc;
+      --wrong: #eb4b48;
+      /* Typography */
+      --font-main: 'Rethink Sans', 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Fragment Mono', 'JetBrains Mono', 'Fira Code', monospace;
+      /* Layout */
+      --max-guesses: 6;
+      --cell-size: 48px;
+      --grid-gap: 8px;
+      --border-radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-color);
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      background: var(--bg-color);
+      backdrop-filter: blur(8px);
+      z-index: 10;
+      justify-content: center;
+      /* Centers the content */
+      position: relative;
+      /* Allows absolute positioning of buttons */
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    #help-btn {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    #reset-btn {
+      position: absolute;
+      right: 56px;
+      /* 16px (help) + 32px (btn width) + 8px (gap) */
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .logo-placeholder {
+      width: 28px;
+      height: 28px;
+      background: var(--surface-color);
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .btn-icon {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+
+    .btn-icon:hover {
+      background: var(--surface-color);
+      border-color: var(--accent-color);
+    }
+
+    /* MAIN GAME AREA */
+    main {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 100px;
+      /* Space for input bar */
+    }
+
+    /* GUESS GRID */
+    #guess-grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--grid-gap);
+      overflow-y: auto;
+      max-width: max-content;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-color) transparent;
+    }
+
+    .guess-row,
+    .header-row {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(93px, 1fr));
+      gap: var(--grid-gap);
+      width: 100%;
+      /* Ensures the row fills the container */
+    }
+
+    .cell {
+      background: var(--surface-color);
+      border: 2px solid var(--border-color);
+      border-radius: var(--border-radius);
+      height: var(--cell-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 4px;
+      word-break: break-word;
+      transition: all 0.2s ease;
+      min-width: 100%;
+    }
+
+    .cell.correct {
+      background: var(--correct);
+      border-color: var(--correct);
+      color: var(--text-dark);
+    }
+
+    .cell.partial {
+      background: var(--partial);
+      border-color: var(--partial);
+      color: var(--text-dark);
+    }
+
+    .cell.higher {
+      background: var(--higher);
+      border-color: var(--higher);
+      color: var(--text-dark);
+    }
+
+    .cell.lower {
+      background: var(--lower);
+      border-color: var(--lower);
+      color: var(--text-dark);
+    }
+
+    .cell.wrong {
+      background: var(--wrong);
+      border-color: var(--wrong);
+      color: var(--text-dark)
+    }
+
+    .cell.empty {
+      background: transparent;
+      border: 2px solid var(--border-color);
+      color: transparent;
+    }
+
+    .cell.neutral {
+      background: var(--surface-color);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+    }
+
+    /* INPUT AREA */
+    .search-container {
+      position: relative;
+    }
+
+    #project-input {
+      width: 100%;
+      padding: 12px 12px 12px 40px;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      outline: none;
+    }
+
+    #project-input:focus {
+      border-color: var(--accent-color);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+    }
+
+    #autocomplete-list {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      right: 0;
+      background: var(--surface-color);
+      border: 2px solid var(--border-color);
+      border-radius: var(--border-radius);
+      max-height: 150px;
+      overflow-y: auto;
+      display: none;
+      z-index: 30;
+    }
+
+    .ac-item {
+      padding: 10px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    .ac-item:last-child {
+      border-bottom: none;
+    }
+
+    .ac-item:hover,
+    .ac-item.active {
+      background: var(--bg-color);
+    }
+
+    .ac-short {
+      font-weight: 700;
+      color: var(--accent-color);
+    }
+
+    .ac-long {
+      color: var(--text-secondary);
+      margin-left: 6px;
+    }
+
+    #submit-btn {
+      padding: 12px;
+      background: var(--accent-color);
+      color: var(--text-primary);
+      border: none;
+      border-radius: var(--border-radius);
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    #submit-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    #submit-btn:disabled {
+      background: var(--border-color);
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    /* Custom Scrollbar for Autocomplete */
+    #autocomplete-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #autocomplete-list::-webkit-scrollbar-track {
+      background: transparent;
+      /* Transparent track */
+    }
+
+    #autocomplete-list::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      /* Colored thumb */
+      border-radius: 4px;
+    }
+
+    #autocomplete-list::-webkit-scrollbar-thumb:hover {
+      background: var(--text-secondary);
+    }
+
+    /* MODALS */
+    .modal-content {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .modal-content h2 {
+      margin-bottom: 12px;
+    }
+
+    .modal-content p {
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .modal-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background: var(--bg-color);
+    }
+
+    /* Modal Blur */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 20px;
+      background: var(--bg-color);
+      /* Semi-transparent background */
+      backdrop-filter: blur(8px);
+      /* The blur effect */
+    }
+
+    /* Close Button for Modal */
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .btn-primary {
+      background: var(--accent-color);
+      color: var(--text-primary);
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+
+    /* Container for the whole game board */
+    #game-board {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+      width: 100%;
+      max-width: 600px;
+      /* Constrain width */
+      margin: 0 auto;
+    }
+
+    /* Header Row */
+    .header-row {
+      margin-bottom: 12px;
+    }
+
+    .header-cell {
+      text-align: center;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Empty Cell Styling */
+    .cell.empty {
+      background: transparent;
+      border: 2px solid var(--border-color);
+      color: transparent;
+    }
+
+    /* Neutral Class for Shortname (Always Gray) */
+    .cell.neutral {
+      background: var(--surface-color);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 480px) {
+      :root {
+        --cell-size: 42px;
+        --grid-gap: 6px;
+      }
+
+      .cell {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo-area">
+      <img src="https://framerusercontent.com/images/lEw30MepTu6c4gWQtzfsdq01Ms.png" style="max-height:48px;max-width:48px">
+      <h1>PASTdle</h1>
+    </div>
+    <button class="btn-icon" id="reset-btn" title="Reset Board">↺</button>
+    <button class="btn-icon" id="help-btn" title="How to Play">?</button>
+  </header>
+  <main style="padding-bottom: 16px;">
+    <!-- Reduced padding since input is inside -->
+    <div id="game-board">
+      <!-- Header Row -->
+      <div class="header-row">
+        <div class="header-cell">Name</div>
+        <div class="header-cell">Dept</div>
+        <div class="header-cell">Start</div>
+        <div class="header-cell">End</div>
+        <div class="header-cell">Active?</div>
+        <div class="header-cell">Env</div>
+      </div>
+      <!-- Grid Rows will be injected here by JS -->
+      <div id="guess-grid"></div>
+      <div id="input-area" style="position: static; width: 100%; margin-top: 16px; display: flex; gap: 8px;">
+        <div class="search-container" style="flex-grow: 1;">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="project-input" placeholder="Search project..." autocomplete="off">
+          <div id="autocomplete-list"></div>
+        </div>
+        <button id="submit-btn" style="flex-shrink: 1; width: 15%;">GUESS</button>
+      </div>
+    </div>
+  </main>
+  <!-- HELP MODAL -->
+  <div id="help-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h2>How to Play</h2>
+      <p>Guess the hidden PAST project in 6 tries. Each guess gives feedback.</p>
+      <button class="btn-primary" onclick="toggleModal('help-modal')">Got it</button>
+    </div>
+  </div>
+  <!-- END GAME MODAL -->
+  <div id="end-modal" class="modal-overlay">
+    <div class="modal-content" style="position: relative;">
+      <!-- Added relative for absolute close btn -->
+      <button class="modal-close" id="modal-close-btn">x</button>
+      <h2 id="end-title">Game Over</h2>
+      <img id="end-image" class="modal-img" src="" alt="" style="display:none;">
+      <p id="end-desc" style="white-space: pre-wrap;"></p>
+      <div id="share-box" style="background:var(--bg-color);padding:8px;border-radius:6px;margin-bottom:12px;font-family:var(--font-mono);font-size:0.8rem;word-break:break-all;white-space: pre-wrap;"></div>
+      <button class="btn-primary" onclick="copyShare()">📋 Copy Results</button>
+      <button class="btn-secondary" onclick="resetGame()">Play Again</button>
+    </div>
+  </div>
+  <script>
+  const PROJECTS = [{
+      "id": 1,
+      "shortName": "HAB",
+      "longName": "High-Altitude Balloon",
+      "startYear": 2025,
+      "lastActive": 2025,
+      "department": "Mission",
+      "isCompleted": true,
+      "designEnv": [
+        "Air"
+      ],
+      "tags": [
+        "balloon",
+        "hab",
+        "high altitude",
+        "mission"
+      ],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 2,
+      "shortName": "FLATSAT",
+      "longName": "FlatSat",
+      "startYear": 2026,
+      "lastActive": 2026,
+      "department": "Mission",
+      "isCompleted": false,
+      "designEnv": [
+        "Ground",
+        "Test"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 3,
+      "shortName": "CUBE",
+      "longName": "CubeSat",
+      "startYear": 2026,
+      "lastActive": 2026,
+      "department": "Mission",
+      "isCompleted": false,
+      "designEnv": [
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 4,
+      "shortName": "COIL",
+      "longName": "Coil Winder",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "ADCS",
+      "isCompleted": false,
+      "designEnv": [
+        "Ground"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 5,
+      "shortName": "INT",
+      "longName": "ADCS Integration Board",
+      "startYear": 2025,
+      "lastActive": 2025,
+      "department": "ADCS",
+      "isCompleted": true,
+      "designEnv": [
+        "Test"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 6,
+      "shortName": "TEST",
+      "longName": "ADCS Testbed",
+      "startYear": 2025,
+      "lastActive": 2025,
+      "department": "ADCS",
+      "isCompleted": true,
+      "designEnv": [
+        "Ground",
+        "Test"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 7,
+      "shortName": "TUMBLE",
+      "longName": "Detumbling Algorithm",
+      "startYear": 2025,
+      "lastActive": 2025,
+      "department": "ADCS",
+      "isCompleted": true,
+      "designEnv": [
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 8,
+      "shortName": "HELM",
+      "longName": "Helmholtz Cage",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "ADCS",
+      "isCompleted": false,
+      "designEnv": [
+        "Ground",
+        "Test"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 9,
+      "shortName": "OSIRIS",
+      "longName": "Sun Sensors",
+      "startYear": 2023,
+      "lastActive": 2026,
+      "department": "ADCS",
+      "isCompleted": true,
+      "designEnv": [
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 10,
+      "shortName": "LOD",
+      "longName": "Live Orientation Display",
+      "startYear": 2025,
+      "lastActive": 2025,
+      "department": "ADCS",
+      "isCompleted": true,
+      "designEnv": [
+        "Ground"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 11,
+      "shortName": "MGTQ",
+      "longName": "Magnetorquer Module",
+      "startYear": 2024,
+      "lastActive": 2025,
+      "department": "ADCS",
+      "isCompleted": true,
+      "designEnv": [
+        "Space",
+        "Test"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 12,
+      "shortName": "C2S",
+      "longName": "Cubesat Camera System",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": false,
+      "designEnv": [
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 13,
+      "shortName": "FRIED",
+      "longName": "Black Box Flight Recorder",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": true,
+      "designEnv": [
+        "Air"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 14,
+      "shortName": "FISH",
+      "longName": "HAB Functional Integration Shield Hardware",
+      "startYear": 2025,
+      "lastActive": 2025,
+      "department": "Avionics",
+      "isCompleted": true,
+      "designEnv": [
+        "Air"
+      ],
+      "tags": [],
+      "description": "Functional Integration Shield Hardware (FISH) is a project that served as the flight computer for HAB 1 while also serving as a development kit for upcoming projects. It also has a barometer, an Inertial Measurement Unit (IMU) and an 8-Mbit NOR flash memory.",
+      "imageUrl": null
+    },
+    {
+      "id": 15,
+      "shortName": "OBC",
+      "longName": "Onboard Flight Computer",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": false,
+      "designEnv": [
+        "Air",
+        "Ground",
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 16,
+      "shortName": "FFS",
+      "longName": "Functional Flight Storage",
+      "startYear": 2024,
+      "lastActive": 2024,
+      "department": "Avionics",
+      "isCompleted": true,
+      "designEnv": [
+        "Space",
+        "Test"
+      ],
+      "tags": [],
+      "description": "Functional Flight Storage (FFS) was a project that focused on developing the onboard primary and secondary storage for a CubeSat. PCBs were developed for flash chips, manufactured and characterised in a collaboration between the Software and Avionics division, forming the groundwork for later flight data storage solutions.",
+      "imageUrl": null
+    },
+    {
+      "id": 17,
+      "shortName": "PULSAR",
+      "longName": "HAB Communication Transciever",
+      "startYear": 2024,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": true,
+      "designEnv": [
+        "Air",
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 18,
+      "shortName": "QUASAR",
+      "longName": "HAB and Space Communication Antenna",
+      "startYear": 2024,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": true,
+      "designEnv": [
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 19,
+      "shortName": "GLOBE",
+      "longName": "GPS Location & Beaconing",
+      "startYear": 2024,
+      "lastActive": 2025,
+      "department": "Avionics",
+      "isCompleted": true,
+      "designEnv": [
+        "Air",
+        "Test"
+      ],
+      "tags": [],
+      "description": "GLoBe was a project under the Avionics Division focusing on designing, integrating, developing and prototyping of GNSS / GPS solutions to be used on the HAB using off-the-shelf components. A mounting solution for the HAB was developed, and this hardware was successfully flown on HAB 1.",
+      "imageUrl": null
+    },
+    {
+      "id": 20,
+      "shortName": "LORA",
+      "longName": "Long Ranging Antenna",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": true,
+      "designEnv": [
+        "Air",
+        "Ground"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 21,
+      "shortName": "SKYREACH",
+      "longName": "Handheld Ground Station",
+      "startYear": 2025,
+      "lastActive": 2025,
+      "department": "Avionics",
+      "isCompleted": true,
+      "designEnv": [
+        "Ground"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 22,
+      "shortName": "UFT",
+      "longName": "UHF Flight Transceiver",
+      "startYear": 2026,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": false,
+      "designEnv": [
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 23,
+      "shortName": "GND",
+      "longName": "Ground Station",
+      "startYear": 2026,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": false,
+      "designEnv": [
+        "Ground"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 24,
+      "shortName": "LSIC",
+      "longName": "Load Sharing Circuit Test Board",
+      "startYear": 2025,
+      "lastActive": 2025,
+      "department": "Avionics",
+      "isCompleted": true,
+      "designEnv": [
+        "Test"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 25,
+      "shortName": "SOLIS",
+      "longName": "Solar Power System",
+      "startYear": 2024,
+      "lastActive": 2025,
+      "department": "Avionics",
+      "isCompleted": true,
+      "designEnv": [
+        "Test"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 26,
+      "shortName": "FGIC",
+      "longName": "Battery Fuel Gauge",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": false,
+      "designEnv": [
+        "Space",
+        "Test"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 27,
+      "shortName": "EPIC",
+      "longName": "Power Distribution Interface",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": false,
+      "designEnv": [
+        "Ground",
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 28,
+      "shortName": "BUCK",
+      "longName": "Buck Buck Buck",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": true,
+      "designEnv": [
+        "Test"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 29,
+      "shortName": "BOOM",
+      "longName": "Battery Protection Board",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": false,
+      "designEnv": [
+        "Test"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 30,
+      "shortName": "HEATER",
+      "longName": "Battery Heating",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Avionics",
+      "isCompleted": false,
+      "designEnv": [
+        "Air",
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 31,
+      "shortName": "BMS",
+      "longName": "Battery Management System",
+      "startYear": 2024,
+      "lastActive": 2025,
+      "department": "Avionics",
+      "isCompleted": true,
+      "designEnv": [
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 32,
+      "shortName": "DASH",
+      "longName": "Ground Control Dashboard",
+      "startYear": 2024,
+      "lastActive": 2024,
+      "department": "Software",
+      "isCompleted": false,
+      "designEnv": [
+        "Ground"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 33,
+      "shortName": "JOBS",
+      "longName": "Job Scheduler",
+      "startYear": 2024,
+      "lastActive": 2024,
+      "department": "Software",
+      "isCompleted": false,
+      "designEnv": [
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 34,
+      "shortName": "STORE",
+      "longName": "Functional Flight Storage Software",
+      "startYear": 2024,
+      "lastActive": 2024,
+      "department": "Software",
+      "isCompleted": true,
+      "designEnv": [
+        "Air",
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 35,
+      "shortName": "DISCORD",
+      "longName": "PAST Discord Bot",
+      "startYear": 2026,
+      "lastActive": 2026,
+      "department": "Software",
+      "isCompleted": true,
+      "designEnv": [
+        "Ground"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 36,
+      "shortName": "CDH",
+      "longName": "Command And Data Handling",
+      "startYear": 2026,
+      "lastActive": 2026,
+      "department": "Software",
+      "isCompleted": false,
+      "designEnv": [
+        "Air",
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 37,
+      "shortName": "RPI",
+      "longName": "Raspberry Pi Shielding Case",
+      "startYear": 2026,
+      "lastActive": 2026,
+      "department": "Mechanical",
+      "isCompleted": false,
+      "designEnv": [
+        "Ground"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 38,
+      "shortName": "STR",
+      "longName": "CubeSat Structure",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Mechanical",
+      "isCompleted": false,
+      "designEnv": [
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 39,
+      "shortName": "HABC",
+      "longName": "HAB Chassis",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Mechanical",
+      "isCompleted": true,
+      "designEnv": [
+        "Air"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 40,
+      "shortName": "SWITCH",
+      "longName": "Inhibitor Switches",
+      "startYear": 2024,
+      "lastActive": 2024,
+      "department": "Mechanical",
+      "isCompleted": false,
+      "designEnv": [
+        "Test"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 41,
+      "shortName": "DS",
+      "longName": "Deployment Switches",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Mechanical",
+      "isCompleted": true,
+      "designEnv": [
+        "Space"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 42,
+      "shortName": "HOT",
+      "longName": "Hotplate Upgrade",
+      "startYear": 2025,
+      "lastActive": 2026,
+      "department": "Mechanical",
+      "isCompleted": false,
+      "designEnv": [
+        "Ground"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 43,
+      "shortName": "STSP",
+      "longName": "Sun Tracking Solar Panels",
+      "startYear": 2025,
+      "lastActive": 2025,
+      "department": "Mechanical",
+      "isCompleted": true,
+      "designEnv": [
+        "Ground",
+        "Test"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    },
+    {
+      "id": 44,
+      "shortName": "GSM",
+      "longName": "Ground Station Mount",
+      "startYear": 2026,
+      "lastActive": 2026,
+      "department": "Mechanical",
+      "isCompleted": true,
+      "designEnv": [
+        "Ground"
+      ],
+      "tags": [],
+      "description": null,
+      "imageUrl": null
+    }
+  ];
+  // ⚙️ CONFIGURATION
+  const CONFIG = {
+    maxGuesses: 6,
+    easyMode: false, // If true, autocomplete filters to only valid remaining candidates
+    theme: 'dark',
+    columns: ['Project', 'Year', 'Dept', 'Done?', 'Env', 'Status']
+  };
+  // 📦 STATE
+  let state = {
+    target: null,
+    guesses: [], // { project, feedback: { project: 'CORRECT', year: 'UP', ... } }
+    currentInput: '',
+    gameOver: false,
+    acIndex: -1,
+    acItems: []
+  };
+  // 🎮 CORE LOGIC STUBS
+  function initGame() {
+    state.acItems = PROJECTS
+    state.target = PROJECTS[Math.floor(Math.random() * PROJECTS.length)];
+    state.guesses = [];
+    state.currentRow = 0;
+    state.gameOver = false;
+    const grid = document.getElementById('guess-grid');
+    grid.innerHTML = ''; // Clear previous
+    // Render 6 Empty Rows
+    for (let i = 0; i < CONFIG.maxGuesses; i++) {
+      const row = document.createElement('div');
+      row.className = 'guess-row';
+      row.id = `row-${i}`;
+      // Create 6 empty cells per row
+      for (let j = 0; j < 6; j++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell empty';
+        cell.id = `r${i}-c${j}`; // ID format: row-col
+        row.appendChild(cell);
+      }
+      grid.appendChild(row);
+    }
+    document.getElementById('project-input').value = '';
+    document.getElementById('submit-btn').disabled = false;
+    document.getElementById('submit-btn').style.opacity = '1';
+    console.log('Game Initialised. Target:', state.target.shortName);
+  }
+
+  function compareDesignEnvs(guessEnv, targetEnv) {
+    const guessSet = new Set(guessEnv);
+    const targetSet = new Set(targetEnv);
+    if (guessSet.size === targetSet.size && [...guessSet].every(item => targetSet.has(item))) {
+      return 'CORRECT';
+    }
+    if ([...guessSet].some(item => targetSet.has(item))) {
+      return 'PARTIAL';
+    }
+    return 'WRONG';
+  }
+
+  function evaluateGuess(guess) {
+    return {
+      project: guess.shortName === state.target.shortName ? 'CORRECT' : 'WRONG',
+      year: guess.startYear > state.target.startYear ? 'DOWN' : guess.startYear < state.target.startYear ? 'UP' : 'CORRECT',
+      dept: guess.department === state.target.department ? 'CORRECT' : 'WRONG',
+      done: guess.isCompleted === state.target.isCompleted ? 'CORRECT' : 'WRONG',
+      lastActive: guess.lastActive > state.target.lastActive ? 'DOWN' : guess.lastActive < state.target.lastActive ? 'UP' : 'CORRECT',
+      env: compareDesignEnvs(guess.designEnv, state.target.designEnv)
+    };
+  }
+
+  function mapFeedback(val, fb, isShortName = false) {
+    let cls = 'wrong';
+    let display = val;
+    if (isShortName) {
+      cls = 'neutral'; // Always gray for shortname
+    } else if (fb === 'CORRECT') {
+      cls = 'correct';
+    } else if (fb === 'UP') {
+      cls = 'higher';
+      display = '⬆️ ' + val;
+    } else if (fb === 'DOWN') {
+      cls = 'lower';
+      display = '⬇️ ' + val;
+    } else if (fb === 'PARTIAL') {
+      cls = 'partial';
+    }
+    // else 'wrong' is default
+    return `<div class="cell ${cls}">${display}</div>`;
+  }
+
+  function renderGuessRow(guess, feedback) {
+    const row = document.createElement('div');
+    row.className = 'guess-row';
+    row.innerHTML = `
+      ${mapFeedback(guess.shortName, feedback.project)}
+      ${mapFeedback(guess.department, feedback.dept)}
+      ${mapFeedback(guess.startYear, feedback.year)}
+      ${mapFeedback(guess.lastActive, feedback.lastActive)}
+      
+      ${mapFeedback(guess.isCompleted ? 'Active' : 'Inactive', !feedback.done)}
+      ${mapFeedback(guess.designEnv.join(', '), feedback.env)}
+      
+      `;
+    return row;
+  }
+
+  function handleSubmission() {
+    const input = document.getElementById('project-input').value.trim().toUpperCase();
+    if (!input) return;
+    const guess = PROJECTS.find(p => p.shortName.toUpperCase() === input);
+    if (!guess) {
+      return;
+    }
+    const feedback = evaluateGuess(guess);
+    state.guesses.push({
+      project: guess,
+      feedback
+    });
+    // Update the specific row instead of appending
+    const rowId = `row-${state.currentRow}`;
+    const rowEl = document.getElementById(rowId);
+    // Clear row class to remove 'empty' styling
+    rowEl.innerHTML = '';
+    console.log('Completed?', guess.isCompleted, feedback.done)
+    const cells = [{
+        val: guess.shortName,
+        fb: feedback.project,
+        isName: true
+      },
+      {
+        val: guess.department,
+        fb: feedback.dept
+      },
+      {
+        val: guess.startYear,
+        fb: feedback.year
+      },
+      {
+        val: guess.lastActive,
+        fb: feedback.lastActive
+      },
+      {
+        val: guess.isCompleted ? 'No' : 'Yes',
+        fb: feedback.done
+      },
+      {
+        val: guess.designEnv.join(', '),
+        fb: feedback.env
+      }
+    ];
+    cells.forEach((c, index) => {
+      const cellDiv = document.createElement('div');
+      cellDiv.innerHTML = mapFeedback(c.val, c.fb, c.isName);
+      // unwrap the div created by mapFeedback
+      rowEl.appendChild(cellDiv.firstChild);
+    });
+    // Cleanup input
+    document.getElementById('project-input').value = '';
+    hideAutocomplete();
+    state.currentRow++;
+    // Check End Game
+    if (feedback.project === 'CORRECT' || state.guesses.length >= CONFIG.maxGuesses) {
+      endGame(feedback.project === 'CORRECT');
+    }
+  }
+
+  function getEmoji(fb) {
+    if (fb === 'CORRECT') return '🟩';
+    if (fb === 'WRONG') return '🟥';
+    if (fb === 'PARTIAL') return '🟨';
+    if (fb === 'UP') return '🟦'; // Higher
+    if (fb === 'DOWN') return '🟪'; // Lower
+    return '⬜';
+  }
+
+  function endGame(won) {
+    state.gameOver = true;
+    document.getElementById('submit-btn').disabled = true;
+    document.getElementById('submit-btn').style.opacity = '0.5';
+    const title = won ? '🎉 You Got It!' : '📡 Mission Failed';
+    document.getElementById('end-title').textContent = title;
+    document.getElementById('end-desc').textContent = "The answer was " + state.target.longName + " (" + state.target.shortName + ").\n"
+    document.getElementById('end-desc').textContent += state.target.description || 'No description is available for the project yet.';
+    const imgEl = document.getElementById('end-image');
+    if (state.target.imageUrl) {
+      imgEl.src = state.target.imageUrl;
+      imgEl.style.display = 'block';
+    } else {
+      imgEl.style.display = 'none';
+    }
+    // Build Share String
+    const status = won ? state.guesses.length : 'X';
+    let shareText = `PASTDLE #${state.target.id} ${status}/${CONFIG.maxGuesses}\n\n`;
+    state.guesses.forEach(g => {
+      const row = [
+        getEmoji(g.feedback.dept),
+        getEmoji(g.feedback.year),
+        getEmoji(g.feedback.lastActive),
+        getEmoji(g.feedback.done),
+        getEmoji(g.feedback.env)
+      ].join('');
+      shareText += row + '\n';
+    });
+    shareText.trimEnd('\n'); //remove trailing newline
+    document.getElementById('share-box').textContent = shareText;
+    toggleModal('end-modal');
+  }
+
+  function resetGame() {
+    document.getElementById('end-modal').style.display = 'none';
+    initGame();
+  }
+  // 🔍 AUTOCOMPLETE
+  const acList = document.getElementById('autocomplete-list');
+  const input = document.getElementById('project-input');
+  input.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase();
+    state.acItems = PROJECTS.filter(p =>
+      p.shortName.toLowerCase().includes(q) ||
+      p.longName.toLowerCase().includes(q) ||
+      p.tags.some(t => t.toLowerCase().includes(q))
+    ).sort((a, b) => a.shortName.localeCompare(b.shortName));
+    if (CONFIG.easyMode && state.guesses.length > 0) {
+    }
+    renderAutocomplete();
+  });
+
+  function renderAutocomplete() {
+    acList.innerHTML = '';
+    if (state.acItems.length === 0) {
+      hideAutocomplete();
+      return;
+    }
+    state.acItems.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = `ac-item ${i === state.acIndex ? 'active' : ''}`;
+      div.innerHTML = `<span class="ac-short">${p.shortName}</span><span class="ac-long">${p.longName}</span>`;
+      div.onclick = () => {
+        input.value = p.shortName;
+        hideAutocomplete();
+      };
+      acList.appendChild(div);
+    });
+    acList.style.display = 'block';
+    state.acIndex = -1;
+  }
+
+  function hideAutocomplete() {
+    acList.style.display = 'none';
+    state.acItems = PROJECTS
+  }
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      state.acIndex = Math.min(state.acIndex + 1, state.acItems.length - 1);
+      renderAutocomplete();
+    }
+    if (e.key === 'ArrowUp') {
+      state.acIndex = Math.max(state.acIndex - 1, -1);
+      renderAutocomplete();
+    }
+    if (e.key === 'Enter') {
+      if (state.acIndex >= 0) {
+        input.value = state.acItems[state.acIndex].shortName;
+        hideAutocomplete();
+      }
+      handleSubmission();
+    }
+  });
+  // 🖱️ EVENT LISTENERS
+  document.getElementById('submit-btn').addEventListener('click', handleSubmission);
+  document.getElementById('help-btn').addEventListener('click', () => toggleModal('help-modal'));
+  // Show autocomplete on focus (click)
+  input.addEventListener('focus', () => {
+    if (state.acItems.length > 0) renderAutocomplete();
+  });
+  // Reset Button
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    resetGame();
+  });
+  document.getElementById('modal-close-btn').addEventListener('click', () => {
+    toggleModal('end-modal');
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-container')) hideAutocomplete();
+  });
+
+  function toggleModal(id) {
+    const el = document.getElementById(id);
+    el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
+  }
+
+  function copyShare() {
+    const text = document.getElementById('share-box').textContent;
+    navigator.clipboard.writeText(text);
+  }
+  initGame();
+</script>
+</body>
+</html>

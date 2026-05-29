@@ -1,0 +1,683 @@
+[
+ {
+  "id": 1,
+  "shortName": "HAB",
+  "longName": "High-Altitude Balloon",
+  "startYear": 2025,
+  "lastActive": 2025,
+  "department": "Mission",
+  "isCompleted": true,
+  "designEnv": [
+   "Air"
+  ],
+  "tags": [
+   "balloon",
+   "hab",
+   "high altitude",
+   "mission"
+  ],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 2,
+  "shortName": "FLATSAT",
+  "longName": "FlatSat",
+  "startYear": 2026,
+  "lastActive": 2026,
+  "department": "Mission",
+  "isCompleted": false,
+  "designEnv": [
+   "Ground",
+   "Test"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 3,
+  "shortName": "CUBE",
+  "longName": "CubeSat",
+  "startYear": 2026,
+  "lastActive": 2026,
+  "department": "Mission",
+  "isCompleted": false,
+  "designEnv": [
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 4,
+  "shortName": "COIL",
+  "longName": "Coil Winder",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "ADCS",
+  "isCompleted": false,
+  "designEnv": [
+   "Ground"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 5,
+  "shortName": "INT",
+  "longName": "ADCS Integration Board",
+  "startYear": 2025,
+  "lastActive": 2025,
+  "department": "ADCS",
+  "isCompleted": true,
+  "designEnv": [
+   "Test"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 6,
+  "shortName": "TEST",
+  "longName": "ADCS Testbed",
+  "startYear": 2025,
+  "lastActive": 2025,
+  "department": "ADCS",
+  "isCompleted": true,
+  "designEnv": [
+   "Ground",
+   "Test"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 7,
+  "shortName": "TUMBLE",
+  "longName": "Detumbling Algorithm",
+  "startYear": 2025,
+  "lastActive": 2025,
+  "department": "ADCS",
+  "isCompleted": true,
+  "designEnv": [
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 8,
+  "shortName": "HELM",
+  "longName": "Helmholtz Cage",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "ADCS",
+  "isCompleted": false,
+  "designEnv": [
+   "Ground",
+   "Test"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 9,
+  "shortName": "OSIRIS",
+  "longName": "Sun Sensors",
+  "startYear": 2023,
+  "lastActive": 2026,
+  "department": "ADCS",
+  "isCompleted": true,
+  "designEnv": [
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 10,
+  "shortName": "LOD",
+  "longName": "Live Orientation Display",
+  "startYear": 2025,
+  "lastActive": 2025,
+  "department": "ADCS",
+  "isCompleted": true,
+  "designEnv": [
+   "Ground"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 11,
+  "shortName": "MGTQ",
+  "longName": "Magnetorquer Module",
+  "startYear": 2024,
+  "lastActive": 2025,
+  "department": "ADCS",
+  "isCompleted": true,
+  "designEnv": [
+   "Space",
+   "Test"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 12,
+  "shortName": "C2S",
+  "longName": "Cubesat Camera System",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": false,
+  "designEnv": [
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 13,
+  "shortName": "FRIED",
+  "longName": "Black Box Flight Recorder",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": true,
+  "designEnv": [
+   "Air"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 14,
+  "shortName": "FISH",
+  "longName": "HAB Functional Integration Shield Hardware",
+  "startYear": 2025,
+  "lastActive": 2025,
+  "department": "Avionics",
+  "isCompleted": true,
+  "designEnv": [
+   "Air"
+  ],
+  "tags": [],
+  "description": "Functional Integration Shield Hardware (FISH) is a project that served as the flight computer for HAB 1 while also serving as a development kit for upcoming projects. It also has a barometer, an Inertial Measurement Unit (IMU) and an 8-Mbit NOR flash memory.",
+  "imageUrl": null
+ },
+ {
+  "id": 15,
+  "shortName": "OBC",
+  "longName": "Onboard Flight Computer",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": false,
+  "designEnv": [
+   "Air",
+   "Ground",
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 16,
+  "shortName": "FFS",
+  "longName": "Functional Flight Storage",
+  "startYear": 2024,
+  "lastActive": 2024,
+  "department": "Avionics",
+  "isCompleted": true,
+  "designEnv": [
+   "Space",
+   "Test"
+  ],
+  "tags": [],
+  "description": "Functional Flight Storage (FFS) was a project that focused on developing the onboard primary and secondary storage for a CubeSat. PCBs were developed for flash chips, manufactured and characterised in a collaboration between the Software and Avionics division, forming the groundwork for later flight data storage solutions.",
+  "imageUrl": null
+ },
+ {
+  "id": 17,
+  "shortName": "PULSAR",
+  "longName": "HAB Communication Transciever",
+  "startYear": 2024,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": true,
+  "designEnv": [
+   "Air",
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 18,
+  "shortName": "QUASAR",
+  "longName": "HAB and Space Communication Antenna",
+  "startYear": 2024,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": true,
+  "designEnv": [
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 19,
+  "shortName": "GLOBE",
+  "longName": "GPS Location & Beaconing",
+  "startYear": 2024,
+  "lastActive": 2025,
+  "department": "Avionics",
+  "isCompleted": true,
+  "designEnv": [
+   "Air",
+   "Test"
+  ],
+  "tags": [],
+  "description": "GLoBe was a project under the Avionics Division focusing on designing, integrating, developing and prototyping of GNSS / GPS solutions to be used on the HAB using off-the-shelf components. A mounting solution for the HAB was developed, and this hardware was successfully flown on HAB 1.",
+  "imageUrl": null
+ },
+ {
+  "id": 20,
+  "shortName": "LORA",
+  "longName": "Long Ranging Antenna",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": true,
+  "designEnv": [
+   "Air",
+   "Ground"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 21,
+  "shortName": "SKYREACH",
+  "longName": "Handheld Ground Station",
+  "startYear": 2025,
+  "lastActive": 2025,
+  "department": "Avionics",
+  "isCompleted": true,
+  "designEnv": [
+   "Ground"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 22,
+  "shortName": "UFT",
+  "longName": "UHF Flight Transceiver",
+  "startYear": 2026,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": false,
+  "designEnv": [
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 23,
+  "shortName": "GND",
+  "longName": "Ground Station",
+  "startYear": 2026,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": false,
+  "designEnv": [
+   "Ground"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 24,
+  "shortName": "LSIC",
+  "longName": "Load Sharing Circuit Test Board",
+  "startYear": 2025,
+  "lastActive": 2025,
+  "department": "Avionics",
+  "isCompleted": true,
+  "designEnv": [
+   "Test"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 25,
+  "shortName": "SOLIS",
+  "longName": "Solar Power System",
+  "startYear": 2024,
+  "lastActive": 2025,
+  "department": "Avionics",
+  "isCompleted": true,
+  "designEnv": [
+   "Test"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 26,
+  "shortName": "FGIC",
+  "longName": "Battery Fuel Gauge",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": false,
+  "designEnv": [
+   "Space",
+   "Test"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 27,
+  "shortName": "EPIC",
+  "longName": "Power Distribution Interface",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": false,
+  "designEnv": [
+   "Ground",
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 28,
+  "shortName": "BUCK",
+  "longName": "Buck Buck Buck",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": true,
+  "designEnv": [
+   "Test"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 29,
+  "shortName": "BOOM",
+  "longName": "Battery Protection Board",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": false,
+  "designEnv": [
+   "Test"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 30,
+  "shortName": "HEATER",
+  "longName": "Battery Heating",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Avionics",
+  "isCompleted": false,
+  "designEnv": [
+   "Air",
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 31,
+  "shortName": "BMS",
+  "longName": "Battery Management System",
+  "startYear": 2024,
+  "lastActive": 2025,
+  "department": "Avionics",
+  "isCompleted": true,
+  "designEnv": [
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 32,
+  "shortName": "DASH",
+  "longName": "Ground Control Dashboard",
+  "startYear": 2024,
+  "lastActive": 2024,
+  "department": "Software",
+  "isCompleted": false,
+  "designEnv": [
+   "Ground"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 33,
+  "shortName": "JOBS",
+  "longName": "Job Scheduler",
+  "startYear": 2024,
+  "lastActive": 2024,
+  "department": "Software",
+  "isCompleted": false,
+  "designEnv": [
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 34,
+  "shortName": "STORE",
+  "longName": "Functional Flight Storage Software",
+  "startYear": 2024,
+  "lastActive": 2024,
+  "department": "Software",
+  "isCompleted": true,
+  "designEnv": [
+   "Air",
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 35,
+  "shortName": "DISCORD",
+  "longName": "PAST Discord Bot",
+  "startYear": 2026,
+  "lastActive": 2026,
+  "department": "Software",
+  "isCompleted": true,
+  "designEnv": [
+   "Ground"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 36,
+  "shortName": "CDH",
+  "longName": "Command And Data Handling",
+  "startYear": 2026,
+  "lastActive": 2026,
+  "department": "Software",
+  "isCompleted": false,
+  "designEnv": [
+   "Air",
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 37,
+  "shortName": "RPI",
+  "longName": "Raspberry Pi Shielding Case",
+  "startYear": 2026,
+  "lastActive": 2026,
+  "department": "Mechanical",
+  "isCompleted": false,
+  "designEnv": [
+   "Ground"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 38,
+  "shortName": "STR",
+  "longName": "CubeSat Structure",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Mechanical",
+  "isCompleted": false,
+  "designEnv": [
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 39,
+  "shortName": "HABC",
+  "longName": "HAB Chassis",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Mechanical",
+  "isCompleted": true,
+  "designEnv": [
+   "Air"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 40,
+  "shortName": "SWITCH",
+  "longName": "Inhibitor Switches",
+  "startYear": 2024,
+  "lastActive": 2024,
+  "department": "Mechanical",
+  "isCompleted": false,
+  "designEnv": [
+   "Test"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 41,
+  "shortName": "DS",
+  "longName": "Deployment Switches",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Mechanical",
+  "isCompleted": true,
+  "designEnv": [
+   "Space"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 42,
+  "shortName": "HOT",
+  "longName": "Hotplate Upgrade",
+  "startYear": 2025,
+  "lastActive": 2026,
+  "department": "Mechanical",
+  "isCompleted": false,
+  "designEnv": [
+   "Ground"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 43,
+  "shortName": "STSP",
+  "longName": "Sun Tracking Solar Panels",
+  "startYear": 2025,
+  "lastActive": 2025,
+  "department": "Mechanical",
+  "isCompleted": true,
+  "designEnv": [
+   "Ground",
+   "Test"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ },
+ {
+  "id": 44,
+  "shortName": "GSM",
+  "longName": "Ground Station Mount",
+  "startYear": 2026,
+  "lastActive": 2026,
+  "department": "Mechanical",
+  "isCompleted": true,
+  "designEnv": [
+   "Ground"
+  ],
+  "tags": [],
+  "description": null,
+  "imageUrl": null
+ }
+]
