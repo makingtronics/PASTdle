@@ -1,14 +1,10 @@
-- add tags
-- add description
+- add tags to data
+- add description to data
 - add images
-- add background
 - add better comments/remove qwen comments
-- fix hint menu
+- fix help menu
 - easy mode toggle in top bar
 - make it a daily game, add cookies to make it such, "next pastdle in...", remove play again
 - when done change 'guess' box to the success/false modal, so the modal should be removed
-- alphabetise scrollbar
-- mobile responsive UI (like stewardle) - top bar skews over on mobile right now, central grid should resize to fill entire screen, same with bar, if below min. size.
-- better search bar text string
 - refactor to remove qwen-isms, make css/js flow nicer
 - clicking on short ID cell brings up small modal with project id - name header, project description content, x to exit
