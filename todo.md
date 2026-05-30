@@ -3,7 +3,8 @@
 - add images
 - add better comments/remove qwen comments
 - fix help menu
-- easy mode toggle in top bar
+- mobile UI issues: reset button icon is too low, too much spacing between column headers and columns, decrease font sizes on smaller UI's
+- find better name than 'env'
 - make it a daily game, add cookies to make it such, "next pastdle in...", remove play again
 - when done change 'guess' box to the success/false modal, so the modal should be removed
 - refactor to remove qwen-isms, make css/js flow nicer

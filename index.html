@@ -13,6 +13,8 @@
   <link href="https://framerusercontent.com/images/lEw30MepTu6c4gWQtzfsdq01Ms.png" rel="icon" media="(prefers-color-scheme: dark)">
   <!-- Three.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Confetti lib -->
+   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <style>
     :root {
       --bg-color: #050505;
@@ -1407,6 +1409,16 @@
       });
       document.getElementById('share-box').textContent = shareText.trimEnd('\n');
       toggleModal('end-modal');
+      if (won) {
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          decay: 0.91,
+          startVelocity: 40,
+          ticks: 300,
+          origin: { y: 0.65}
+        });
+      }
     }
 
     function resetGame() {
