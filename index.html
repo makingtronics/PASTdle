@@ -145,7 +145,7 @@
       gap: 4px;
       align-items: center;
       width: 100%;
-      max-width: 600px; /* Max width for desktop */
+      max-width: 720px; /* Max width for desktop */
     }
 
     /* GUESS GRID */
@@ -165,7 +165,7 @@
     }
 
     .header-row {
-      margin-bottom: 12px;
+      margin-bottom: 0rem;
     }
 
     .header-cell {
@@ -313,7 +313,7 @@
     }
 
     /* MOBILE RESPONSIVENESS */
-    @media (max-width: 600px) {
+    @media (max-width: 720px) {
       :root {
         --cell-size: 36px; /* Smaller cells */
         --grid-gap: 4px;   /* Tighter gap */
@@ -329,13 +329,15 @@
       }
 
       .header-cell {
-        font-size: 0.7rem; /* Smaller headers */
+        font-size: clamp(0.3rem, 0.5rem, 0.7rem);; /* Smaller headers */
         letter-spacing: 0;
       }
 
       .cell {
-        font-size: 0.7rem; /* Smaller cell text */
-        padding: 2px;
+        /* clamp size depending on how small the screen size is */
+        font-size: clamp(0.3rem, 2.5vw, 0.7rem);
+        padding: 1px;
+        white-space: nowrap;
       }
 
       #submit-btn {
@@ -371,9 +373,9 @@
         <div class="header-cell">Name</div>
         <div class="header-cell">Dept</div>
         <div class="header-cell">Start</div>
-        <div class="header-cell">End</div>
+        <div class="header-cell">Until</div>
         <div class="header-cell">Active?</div>
-        <div class="header-cell">Env</div>
+        <div class="header-cell">Domain</div>
       </div>
       <div id="guess-grid"></div>
       <div id="input-area">
