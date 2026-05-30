@@ -111,6 +111,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      line-height: 1;
+      padding: 0;
       transition: 0.2s;
     }
 
@@ -381,6 +383,16 @@
         </div>
         <button id="submit-btn">GUESS</button>
       </div>
+      <div id="result-area" style="display: none; width: 100%; max-width: 600px; margin-top: 16px; text-align: center;">
+      <div class="modal-content" style="max-width: 100%; margin: 0 auto;">
+        <h2 id="result-title"></h2>
+        <img id="result-image" class="modal-img" src="" alt="" style="display:none;">
+        <p id="result-desc" style="white-space: pre-wrap;"></p>
+        <div id="result-share" style="background:var(--bg-color);padding:8px;border-radius:6px;margin-bottom:12px;font-family:var(--font-mono);font-size:0.8rem;word-break:break-all;white-space: pre-wrap;"></div>
+        <button class="btn-primary" onclick="copyShare()">Copy Results</button>
+        <button class="btn-secondary" onclick="resetGame()">Play Again</button>
+      </div>
+    </div>
     </div>
   </main>
 
@@ -393,6 +405,7 @@
     </div>
   </div>
   <!-- END GAME MODAL -->
+  <!-- TODO: REMOVE? -->
   <div id="end-modal" class="modal-overlay">
     <div class="modal-content" style="position: relative;">
       <button class="modal-close" id="modal-close-btn">x</button>
@@ -1389,26 +1402,28 @@
       state.gameOver = true;
       document.getElementById('submit-btn').disabled = true;
       document.getElementById('submit-btn').style.opacity = '0.5';
+
+      // 1. Hide input, show result area
+      document.getElementById('input-area').style.display = 'none';
+      const resultArea = document.getElementById('result-area');
+      resultArea.style.display = 'block';
+
+      // 2. Populate content (using the new IDs)
       const title = won ? '🎉 You Got It!' : '📡 Mission Failed';
-      document.getElementById('end-title').textContent = title;
-      document.getElementById('end-desc').textContent = "The answer was " + state.target.longName + " (" + state.target.shortName + ").\n"
-      document.getElementById('end-desc').textContent += state.target.description || 'No description is available for the project yet.';
+      document.getElementById('result-title').textContent = title;
+      document.getElementById('result-desc').textContent = "The answer was " + state.target.longName + " (" + state.target.shortName + ").\n" + (state.target.description || 'No description available.');
       
-      const imgEl = document.getElementById('end-image');
+      const imgEl = document.getElementById('result-image');
       if (state.target.imageUrl) { imgEl.src = state.target.imageUrl; imgEl.style.display = 'block'; }
       else { imgEl.style.display = 'none'; }
 
       const status = won ? state.guesses.length : 'X';
       let shareText = `PASTDLE #${state.target.id} ${status}/${CONFIG.maxGuesses}\n\n`;
       state.guesses.forEach(g => {
-        const row = [
-          getEmoji(g.feedback.dept), getEmoji(g.feedback.year),
-          getEmoji(g.feedback.lastActive), getEmoji(g.feedback.done), getEmoji(g.feedback.env)
-        ].join('');
+        const row = [getEmoji(g.feedback.dept), getEmoji(g.feedback.year), getEmoji(g.feedback.lastActive), getEmoji(g.feedback.done), getEmoji(g.feedback.env)].join('');
         shareText += row + '\n';
       });
-      document.getElementById('share-box').textContent = shareText.trimEnd('\n');
-      toggleModal('end-modal');
+      document.getElementById('result-share').textContent = shareText.trimEnd('\n');
       if (won) {
         confetti({
           particleCount: 150,
@@ -1422,7 +1437,9 @@
     }
 
     function resetGame() {
-      document.getElementById('end-modal').style.display = 'none';
+      // Show input area again, hide result area
+      document.getElementById('input-area').style.display = 'flex';
+      document.getElementById('result-area').style.display = 'none';
       initGame();
     }
 
