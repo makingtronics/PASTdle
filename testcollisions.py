@@ -1,7 +1,7 @@
 import pandas as pd
 
 df = pd.read_excel('Project List.xlsx',sheet_name='Project List') # Load Sheet 1
-logic_cols = ['Year Started', 'Last Active','Department', 'Completed?','Designed For?']
+logic_cols = ['Year Started', 'Last Active','Department', 'Active?','Designed For?']
 
 # print(df.columns.values)
 

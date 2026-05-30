@@ -1,6 +1,5 @@
 - add tags to data
 - add description to data
 - add images
-- add better comments/remove qwen comments
 - make it a daily game, add cookies to make it such, "next pastdle in...", remove play again
 - refactor to remove qwen-isms, make css/js flow nicer
