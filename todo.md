@@ -2,7 +2,6 @@
 - add description to data
 - add images
 - add better comments/remove qwen comments
-- fix help menu
 - make it a daily game, add cookies to make it such, "next pastdle in...", remove play again
 - refactor to remove qwen-isms, make css/js flow nicer
 - clicking on short ID cell brings up small modal with project id - name header, project description content, x to exit
